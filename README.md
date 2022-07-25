@@ -1,11 +1,12 @@
-— 
+start
+—
 title: Ticket, Please
 layout: page
 —
 
 Read user stories very carefully.
 
-Fork and clone repo. 
+Fork and clone repo.
 
 When time is up, submit pull request.
 
