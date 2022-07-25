@@ -1,12 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Employee, type: :model do
-  describe 'relationships' do
-    it { should belong_to :department }
-    it { should have_many(:tickets).through(:employee_tickets) }
-  end
-
-  it 'can give names of shared employees' do
+RSpec.describe 'employee show' do
+  before :each do
     @department_1 = Department.create!(name: 'Sales', floor: 3)
     @department_2 = Department.create!(name: 'I.T.', floor: 2)
 
@@ -29,6 +24,48 @@ RSpec.describe Employee, type: :model do
     EmployeeTicket.create!(employee_id: @employee_2.id, ticket_id: @ticket_4.id)
     EmployeeTicket.create!(employee_id: @employee_3.id, ticket_id: @ticket_6.id)
 
-    expect(@employee_1.shared(@employee_1.id)).to eq(["Tyler"])
+
+    visit "/employees/#{@employee_1.id}"
+  end
+
+  it 'shows employee name and department' do
+
+    expect(page).to have_content("Thomas")
+    expect(page).to have_content("Sales")
+  end
+
+  it 'lists tickets oldest to youngest' do
+
+    expect(@ticket_2.subject).to appear_before(@ticket_4.subject)
+    expect(@ticket_4.subject).to appear_before(@ticket_1.subject)
+    expect(@ticket_1.subject).to appear_before(@ticket_3.subject)
+  end
+
+  it 'shows the oldest ticket' do
+
+    expect(page).to have_content("Oldest ticket: sale_2")
+  end
+
+  it 'can add a ticket to employee' do
+
+  expect(page).to_not have_content('sale_5')
+
+  fill_in "subject", with: "sale_5"
+
+  click_button "Add Ticket"
+
+  expect(current_path).to eq("/employees/#{@employee_1.id}")
+
+  expect(page).to have_content("sale_5")
+
+  end
+
+  it 'shows employee level' do
+
+    expect(page).to have_content('Level: 3')
+  end
+
+  it 'shows employees with shared tickets' do
+    expect(page).to have_content('Tyler')
   end
 end

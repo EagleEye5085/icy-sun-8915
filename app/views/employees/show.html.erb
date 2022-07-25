@@ -1,0 +1,18 @@
+<h1><%= @employee.name %></h1>
+<p>Department: <%= @employee.department.name %></p>
+<p>Level: <%= @employee.level %></p>
+
+<h3>Tickets</h3>
+<%= @employee.tickets.sort_old_new.each do |t| %>
+<p>Subject:<%= t.subject %>, Age: <%= t.age %></p>
+<% end %>
+
+<%= form_with url: "/employees/#{@employee.id}", method: :post, local: true do |f| %>
+  <%= f.label :subject %>
+  <%= f.text_field :subject %>
+  <%= f.submit 'Add Ticket' %>
+<% end %>
+
+<h2>Oldest ticket: <%= @employee.tickets.sort_old_new[0].subject %></h2>
+
+<h2>Shares tickets with: <%= @employee.shared(@employee.id) %></h2>
